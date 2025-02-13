@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Intro Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        select, button {
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            width: 60%;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Sports Intro Chatbot 🏆</h1>
+    <p>Select a sport to learn about:</p>
+    <select id="sportSelect">
+        <option value="Soccer">Soccer</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Cricket">Cricket</option>
+        <option value="Baseball">Baseball</option>
+    </select>
+    <button onclick="getSportInfo()">Learn More</button>
+    <div id="result"></div>
+
+    <script>
+        function getSportInfo() {
+            let sport = document.getElementById("sportSelect").value;
+            fetch("/get_sport_info", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ sport: sport })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("result").innerHTML = `<p style='color:red;'>${data.error}</p>`;
+                } else {
+                    document.getElementById("result").innerHTML = `
+                        <h2>${sport} 🏅</h2>
+                        <p><strong>Rules:</strong> ${data.rules}</p>
+                        <p><strong>Famous Players:</strong> ${data.famous_players}</p>
+                        <p><strong>History:</strong> ${data.history}</p>
+                        <p><strong>Beginner Tips:</strong> ${data.beginner_tips}</p>
+                    `;
+                }
+            })
+            .catch(error => console.error("Error fetching sport info:", error));
+        }
+    </script>
+</body>
+</html>
